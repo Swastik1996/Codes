@@ -1,86 +1,66 @@
-struct MCMF {
-	typedef int ctype;
-	struct Edge { int x, y; ctype cap, cost; };
-	vector<Edge> E;vector<int> adj[N];
-	int n, prev[N];ctype dist[N],phi[N];
+const int N = 820; 
+//Mincost code start
+#define M N*N
+int last[N], tlast[N], d[N], v[N];
+int ver[M*2], nexxt[M*2], c[M*2], cost[M*2];
+int S,T,ptr;
 
-	MCMF(int size) : n(size) {}
-
-	void add(int x, int y, ctype cap, ctype cost) {  
-		adj[x].pb(sz(E)); E.push_back({x,y,cap,cost});
-		adj[y].pb(sz(E)); E.push_back({y,x,0,-cost});
-	}
-
-	void mcmf(int s, int t, ctype &flowVal, ctype &flowCost) {
-		flowVal = flowCost = 0; fill(phi,0);
-		while (true) {
-			fill(prev,-1);
-			FOR(i,0,n-1) dist[i] = 1e9;
-			dist[s] = prev[s] = 0;
-
-			set<pair<ctype,int> > Q;
-			Q.insert({dist[s],s});
-			while (!Q.empty()){
-				int x = Q.begin()->S;
-				Q.erase(Q.begin());
-				for(it : adj[x]) {
-					const Edge &e = E[it];
-					if (e.cap <= 0) continue;
-					ctype cc = e.cost + phi[x] - phi[e.y];                    // ***
-					if (dist[x] + cc < dist[e.y]) {
-						Q.erase({dist[e.y], e.y});
-						dist[e.y] = dist[x] + cc;
-						prev[e.y] = it;
-						Q.insert({dist[e.y], e.y});
-					}
-				}
-			}
-			if (prev[t] == -1) break;
-
-			ctype z = 1e9;
-			for (x = t; x != s; x = E[prev[x]].x) z = min(z, E[prev[x]].cap);
-			for (x = t; x != s; x = E[prev[x]].x)
-				{ E[prev[x]].cap -= z; E[prev[x]^1].cap += z; }
-			flowVal += z;
-			flowCost += z * (dist[t] - phi[s] + phi[t]);
-			FOR(i,0,n-1) if (prev[x] != -1) phi[x] += dist[x];     // ***
-		}
-	}
-};
+void addEdge(int from, int to, int cap, int co) {
+    // cout << from << " " << to << endl;
+    ver[ptr] = to; c[ptr] = cap; cost[ptr] = co; nexxt[ptr] = last[from]; last[from] = ptr++;
+    ver[ptr] = from; c[ptr] = 0; cost[ptr] = -co; nexxt[ptr] = last[to]; last[to] = ptr++;
+}
+int opp(int n) { return (n&1)?n+1:n-1; }
+bool relable() {
+    int add = 0x7fffffff;
+    FOR(i,0,T) if(v[i]) for(int j=tlast[i]; j; j = nexxt[j]) if(v[ver[j]]==0 && c[j] && (add > (d[ver[j]]+cost[j]-d[i])))
+            add = d[ver[j]] + cost[j] - d[i];
+    if(add == 0x7fffffff) return false;
+    FOR(i,0,T) if(v[i]) {
+        v[i] = false;
+        d[i] += add;
+        last[i] = tlast[i];
+    } 
+    return true;
+}
+int dfs(int cur, int flow) {
+    if(cur == T) return flow;
+    v[cur] = 1;
+    int t;
+    for(int &i=last[cur]; i; i = nexxt[i]) if(c[i] && v[ver[i]]==0 && d[cur] == d[ver[i]]+cost[i] && (t = dfs(ver[i], (flow < c[i]?flow:c[i])))) {
+        c[i] -= t;
+        c[opp(i)] += t;
+        v[cur] = 0;
+        return t;
+    }
+    return 0;
+}
+int MCMF(int _S, int _T) {
+    S = _S;
+    T = _T;
+    int ans = 0;
+    FOR(i,0,T) d[i] = 0, tlast[i] = last[i], v[i] = 0;
+    do {
+        int t;
+        while(t=dfs(S,0x7fffffff)) {
+            ans += t*d[S];
+        }
+    } while(relable());
+    return ans;
+}
+//Mincost code end
 int main(){
-  
-  clock_t tm = clock();
   fast;
-  int __t = 1;
-  //cin >> __t;
-  FOR(_t,1,__t){
-      	int n;
-      	cin >> n;
-      	FOR(i,0,n-1){
-      		cin >> a[i].F >> a[i].S;
-      	}
-      	FOR(i,0,n-1){
-      		cin >> b[i].F >> b[i].S;
-      	}
-      	MCMF *mc = new MCMF(2*n+10);
-      	FOR(i,0,n-1){
-      		FOR(j,0,n-1){
-      			int dist = abs(a[i].F - b[j].F) + abs(a[i].S - b[j].S);
-      			mc->add(i,j+n,100,dist);
-      		}
-      	}
-      	FOR(i,0,n-1){
-      		mc->add(2*n,i,1,0);
-      	}
-      	FOR(i,n,2*n-1){
-      		mc->add(i,2*n+1,1,0);
-      	}
-      	int a1,a2;
-      	mc->mcmf(2*n,2*n+1,a1,a2);
-      	assert(a1 == n);
-      	cout << a2 << "\n";
+  int S = 0, T = 2*n + 1;ptr = 1;
+  int offset = 1e6;
+  FOR(i,0,n-1)addEdge(S,i+1,1,0);
+  MCMF(S,T);
+  FOR(i,0,n-1){
+    int x = -1;
+    for(int j = tlast[i+1] ; j ; j = nexxt[j]){
+        if(ver[j] != 0 && c[j] == 0)x = ver[j] - n - 1;
+    }
+    cout << x + 1 << " ";
   }
-  tm = clock()-tm ;
-  cerr << (float)(tm)/CLOCKS_PER_SEC << "\n";
   return 0;
 }

@@ -1,23 +1,19 @@
 class DSU{
   public:
-    int par[N],rank[N];
+    vector<int> par,rank;
     void init(int n){
-      FOR(i,0,n){
-        par[i] = i;rank[i] = 1;
-      }
+      par.assign(n,0);
+      rank.assign(n,1);
+      for(int i = 0; i < n ; ++i)par[i] = i;
     }
     int find(int x){
-      if(par[x] == x) return x;
-      par[x] = find(par[x]);
-      return par[x];
+      return  ( (par[x] == x) ? x : par[x] = find(par[x]) );
     }
-    void unite(int x, int y){
+    int unite(int x, int y){
       x=find(x); y=find(y);
-      if(x == y) return;
+      if(x == y) return 0;
       if(rank[x] > rank[y])swap(x,y);
       par[x] = y;rank[y] += rank[x];
-    }
-    bool same(int x, int y){
-      return find(x) == find(y);
+      return 1;
     }
 }d;

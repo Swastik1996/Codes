@@ -36,16 +36,16 @@ const double eps = 1e-9;
 const int BIG = 1e6;
 
 ii T[12*N];
-int count;
+int count1;
 int bit = 30;
 int new_node(){
-	++count;
-	T[count].F = T[count].S = 0;
-	return count;
+	++count1;
+	T[count1].F = T[count1].S = 0;
+	return count1;
 }
 
 int rev(int val, int it = bit){
-	int ret = 0;
+	int res = 0;
 	while(it--){
 		res <<= 1;
 		res |= val&1;
@@ -55,33 +55,22 @@ int rev(int val, int it = bit){
 }
 
 int add(int t,int val,int it = bit){
-	if(!t){
-		t = new_node();
-	}
-	if(it){
-		if(val&1){
-			T[t].S = add(T[t].S,val >> 1,it - 1);
-		}
-		else{
-			T[t].F = add(T[t].F,val >> 1,it - 1);
-		}
-	}
+	if(!t)t = new_node();
+	if(it)
+		if(val&1)T[t].S = add(T[t].S,val >> 1,it - 1);
+		else T[t].F = add(T[t].F,val >> 1,it - 1);
 	return t;
 }
-int get(int i,int val,int it = bit ,int st = 0){
+int get(int t,int val,int it = bit ,int st = 0){
 	if(it){
 		int son = val&1 ? T[t].F : T[t].S;
-		if(son){
-			return get(son,val>>1,it - 1,(st << 1)|1);
-		}
+		if(son)return get(son,val>>1,it - 1,(st << 1)|1);
 		else{
 			son = val&1 ? T[t].S : T[t].F;
 			return get(son,val>>1,it - 1,(st << 1));
 		}
 	}
-	else{
-		return st;
-	}
+	else return st;
 }
 int main(){
   
@@ -90,7 +79,8 @@ int main(){
   int __t = 1;
   cin >> __t;
   FOR(_t,1,__t){
-      
+      add(0,5);
+      get(0,2);
   }
   tm = clock()-tm ;
   cerr << (float)(tm)/CLOCKS_PER_SEC << "\n";

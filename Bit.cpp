@@ -1,21 +1,9 @@
-struct FEN{
-  vector<int> T;
+template<typename T>
+struct BIT 
+{
+  vector<T> t;
   int n;
-  FEN(){n=0;T.clear();}
-  FEN(int sz){n=sz;T.clear();T.resize(sz+1);}
-  void clear(int sz){n=sz;T.clear();T.resize(sz+1);}
-  void update(int i, int val){
-    while(i<=n){
-      T[i]+=val;
-      i+=i&-i;
-    }
-  }
-  int query(int i){
-    ll ans=0;
-    while(i>0){
-      ans+=T[i];
-      i-=i&-i;
-    }
-    return ans;
-  }
-}
+  BIT(int nn) { n = nn;t.assign(n,0);}
+  void update(int i, T val){for(;i <= n;i += i & -i)t[i] += val;}
+  T query(int i) {T ans = 0; for(;i > 0; i -= i & -i) ans += t[i]; return ans;}
+};

@@ -33,7 +33,7 @@ typedef pair<double,double> pdd;
  FILE *fin = freopen("cubes.in","r",stdin);
  //FILE *fout = freopen("out.txt","w",stdout);
 #endif
-ordered_set<int> s;
+ordered_set<ii> s;
 const ll INF = 1e18;
 const int mod = 1e9+7;
 const int N = 1e3+10; 
@@ -43,17 +43,16 @@ const int BIG = 1e6;
 
 int main(){
   
-  clock_t tm = clock();
   fast;
   int __t = 1;
   //cin >> __t;
   FOR(_t,1,__t){
-    	s.insert(1);
-    	s.insert(3);
-    	cout << s.order_of_key(2) << "\n";
-    	cout << *s.find_by_order(1) << "\n";  
+    	s.insert({1,1});
+    	s.insert({3,1});
+    	//cout << s.order_of_key(2) << "\n";
+    	cout << (*s.find_by_order(1)).S << "\n";  
   }
-  tm = clock()-tm ;
-  cerr << (float)(tm)/CLOCKS_PER_SEC << "\n";
+  //tm = clock()-tm ;
+  //cerr << (float)(tm)/CLOCKS_PER_SEC << "\n";
   return 0;
 }

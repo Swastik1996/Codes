@@ -1,10 +1,5 @@
 int f[N];
 int main(){
-  clock_t tm = clock();
-  fast;
-  int __t = 1;
-  //cin >> __t;
-  FOR(_t,1,__t){
       string t,p;
       cin >> p;
       int m = sz(p);
@@ -29,8 +24,5 @@ int main(){
         }
         j++;
       }*/
-  }
-  tm = clock()-tm ;
-  cerr << (float)(tm)/CLOCKS_PER_SEC << "\n";
   return 0;
 } 

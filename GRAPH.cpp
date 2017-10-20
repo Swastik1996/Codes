@@ -52,23 +52,18 @@ void dfst(int node){ //Furthest 2 nodes of a node
   }
   pl[node]=max(pl[node],x+y);
 }
-
-bool vis[N];
-int dist[N];
-priority_queue<ii,vector<ii>,greater<ii> > q;
-void dijkstra(int node){ 
-    fill(dist,127);
-    fill(vis,0);
+ll dist[N]; // fill it with LLONG_MAX
+int par[N];
+priority_queue<pair<ll,int>,vector<pair<ll,int> >,greater<pair<ll,int> > > q;
+void dijkstra(int n,int node){ 
     dist[node] = 0;
     q.push({dist[node],node});
     while(!q.empty()){
-       int u = q.top().S;
-       q.pop();
-       if(vis[u])continue;
-       vis[u] = 1;
+       int u = q.top().S;q.pop();
        for(auto p : G[u]){
           if(dist[p.F] > dist[u] + p.S){
             dist[p.F] = dist[u] + p.S;
+            par[p.F] = u;
             q.push({dist[p.F],p.F});
           }
        }
@@ -76,16 +71,15 @@ void dijkstra(int node){
 }
 
 void FORD(int node){
-    FOR(i,0,n-1)dist[i] = 2e9;
     dist[node] = 0;
-    FOR(x,1,n){
+    for(int x = 1; x <= n ; ++x){
         for(auto e : E){
           int i = e.S.F;
           int j = e.S.S;
           int w = e.F;
           if(dist[j] > dist[i] + w){
             if(x == n){
-              cout << "NEG\n";return;
+              printf("NEG");return;
             }
             dist[j] = dist[i] + w;
           }
